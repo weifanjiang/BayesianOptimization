@@ -267,13 +267,18 @@ class BayesianOptimization(Observable):
                                     self._space._constraint_values)
 
         # Finding argmax of the acquisition function.
+        space_max = self._space.max()
+        if space_max is None:
+            y_max_params = None
+        else:
+            y_max_params = self._space.params_to_array(space_max['params'])
         suggestion = acq_max(ac=utility_function.utility,
                              gp=self._gp,
                              constraint=self.constraint,
                              y_max=self._space._target_max(),
                              bounds=self._space.bounds,
                              random_state=self._random_state,
-                             y_max_params=self._space.params_to_array(self._space.max()['params']))
+                             y_max_params=y_max_params)
 
         return self._space.array_to_params(suggestion)
 
